@@ -114,7 +114,7 @@ public class HelloServlet extends HttpServlet {
 
                 if(numRows.next()) {
                     System.out.println("result is not null");
-                    pst.setString(1, getID(numRows.getInt(1)));
+                    pst.setString(1, getID(numRows.getInt(1)+1));
                 }
 
                 pst.setString(2, navn);
@@ -130,7 +130,7 @@ public class HelloServlet extends HttpServlet {
                 e.printStackTrace();
             }
         } else {
-            out.println("¯\\_(ツ)_/¯");
+            out.println("<h1>¯\\_(ツ)_/¯</h1>");
         }
 
         out.println("<a href=\"http://localhost:8080\"> Go to index");
@@ -141,6 +141,7 @@ public class HelloServlet extends HttpServlet {
     public void openDocumentHeadAndTitle(PrintWriter out, String title) {
         out.println("<!DOCTYPE html>");
         out.println("<head>");
+        out.println("<meta charset=\"utf-8\"");
         out.println("<title>" + title + "</title>");
         out.println("<link rel=\"stylesheet\" href=\"css.css\">");
     }
