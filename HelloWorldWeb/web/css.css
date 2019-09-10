@@ -1,0 +1,38 @@
+body {
+    background-color: lightblue;
+    background-size: cover;
+    text-shadow: 0.05em 0.05em black;
+}
+
+h1, h3, h5 {
+    color: red;
+}
+
+h2, h4, h6 {
+    color: darkolivegreen;
+}
+
+p {
+    color: white;
+}
+
+input[type=text] {
+    margin-bottom: 3em;
+    padding-bottom: 1em;
+}
+
+button {
+    margin-top: 0.5em;
+}
+
+.paras {
+    text-shadow: 1px 1px 2px red, 0 0 1em darkblue, 0 0 0.2em blue;
+}
+
+.helloWorld {
+    color: mediumvioletred;
+}
+
+.register {
+    margin-bottom: 1em;
+}
