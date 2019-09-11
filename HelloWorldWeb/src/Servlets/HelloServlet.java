@@ -1,8 +1,6 @@
 package Servlets;
 
-import Classes.CustomerIDGenerator;
-import Classes.DbTools;
-import Classes.PasswordHasher;
+import Classes.*;
 import sun.security.util.Password;
 
 import javax.servlet.ServletException;
@@ -18,16 +16,21 @@ import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 @WebServlet(name = "HelloServlet", urlPatterns = {"/HelloServlet"})
 public class HelloServlet extends HttpServlet {
 
     ArrayList<String> users;
-    PasswordHasher hasher;
+    PasswordHashAndCheck passwordHashAndCheck;
+
+    Scanner scanner;
 
     public void init() {
         users = new ArrayList<>();
-        hasher = new PasswordHasher();
+        passwordHashAndCheck = new PasswordHashAndCheck();
+
+        scanner = new Scanner(System.in);
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -105,27 +108,42 @@ public class HelloServlet extends HttpServlet {
         // TODO: Sin egen metode
         } else if (action.toLowerCase().contains("registrer")) {
             try {
-                char[] password = request.getParameter("password").toCharArray();
+                // Save the password locally
+                // TODO: Få det til å funke uten å lagre passordet som en String?
+                String password = request.getParameter("password");
+                System.out.println();
+
                 PreparedStatement pst = connection.prepareStatement("USE users");
                 pst.execute();
                 ResultSet numRows = pst.executeQuery("SELECT COUNT(*) FROM registered_users");
+                // Prepare to register new user
                 String insert = "INSERT INTO registered_users(User_ID, Name, Password_Hash, Password_Salt) VALUES (?, ?, ?, ?)";
                 pst = connection.prepareStatement(insert);
 
                 if(numRows.next()) {
-                    System.out.println("result is not null");
+                    // If the table is empty, the first customer would get the id 'C00000', that why we add 1.
                     pst.setString(1, getID(numRows.getInt(1)+1));
                 }
 
                 pst.setString(2, navn);
 
-                String hashedPassword = hasher.stringToSaltedHash(password.toString());
-                Arrays.fill(password, (char) 0);
+                String hashedPassword = passwordHashAndCheck.stringToSaltedHash(password.toString());
+                //Arrays.fill(password, (char) 0);
 
                 String[] parts = hashedPassword.split(":");
-                pst.setString(3, parts[1]);
+                // The salt
                 pst.setString(4, parts[0]);
+                // The password
+                pst.setString(3, parts[1]);
+                // Insert the registered user
                 pst.execute();
+
+                // Try to validate the password, i.e. a log-in attempt
+                password = scanner.next();
+
+                System.out.println(passwordHashAndCheck.validatePassword(password.toString(), hashedPassword));
+
+                //Arrays.fill(password, (char) 0);
             } catch (SQLException | NoSuchAlgorithmException | InvalidKeySpecException e) {
                 e.printStackTrace();
             }
@@ -141,7 +159,7 @@ public class HelloServlet extends HttpServlet {
     public void openDocumentHeadAndTitle(PrintWriter out, String title) {
         out.println("<!DOCTYPE html>");
         out.println("<head>");
-        out.println("<meta charset=\"utf-8\"");
+        out.println("<meta charset=\"utf-8\"/>");
         out.println("<title>" + title + "</title>");
         out.println("<link rel=\"stylesheet\" href=\"css.css\">");
     }

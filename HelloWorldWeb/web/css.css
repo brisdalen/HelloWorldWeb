@@ -12,6 +12,10 @@ h2, h4, h6 {
     color: darkolivegreen;
 }
 
+h1, h1:lang(ja-jp) {
+    font-family: serif;
+}
+
 p {
     color: white;
 }
@@ -27,6 +31,7 @@ button {
 
 .paras {
     text-shadow: 1px 1px 2px red, 0 0 1em darkblue, 0 0 0.2em blue;
+    font-family: medium-content-serif-font, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 .helloWorld {
